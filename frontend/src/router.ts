@@ -5,7 +5,7 @@ import Projects from './views/Projects.vue'
 import { useAuthStore } from './stores/auth'
 
 const routes: RouteRecordRaw[] = [
-  { path: '/', component: Home },
+  { path: '/', component: Home, meta: { requiresAuth: true } },
   { path: '/login', component: Login },
   { path: '/projects', component: Projects, meta: { requiresAuth: true } },
 ]
@@ -17,8 +17,11 @@ const router = createRouter({
 
 router.beforeEach((to) => {
   const auth = useAuthStore()
-  if (to.meta.requiresAuth && !auth.token) {
+  if (!auth.token && to.path !== '/login') {
     return { path: '/login' }
+  }
+  if (auth.token && to.path === '/login') {
+    return { path: '/' }
   }
 })
 

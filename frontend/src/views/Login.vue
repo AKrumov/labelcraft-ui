@@ -1,16 +1,23 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useAuthStore } from '../stores/auth'
+import { useNotificationStore } from '../stores/notifications'
 import { useRouter } from 'vue-router'
 
 const email = ref('')
 const password = ref('')
 const auth = useAuthStore()
+const notify = useNotificationStore()
 const router = useRouter()
 
 async function submit() {
-  await auth.login(email.value, password.value)
-  router.push('/projects')
+  try {
+    await auth.login(email.value, password.value)
+    notify.notify('Logged in', 'success')
+    router.push('/projects')
+  } catch (err) {
+    notify.notify('Login failed', 'error')
+  }
 }
 </script>
 
