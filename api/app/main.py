@@ -1,9 +1,27 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from .database import init_db
-from . import auth, projects, datasets, annotations
+
+from .database import init_db, SessionLocal
+from .security import get_password_hash
+from . import auth, projects, datasets, annotations, models
+
+
+def ensure_admin_user() -> None:
+    """Create a default admin user if the database is empty."""
+    db = SessionLocal()
+    try:
+        if db.query(models.User).count() == 0:
+            admin = models.User(
+                email="labelcraft", password_hash=get_password_hash("Asex1993")
+            )
+            db.add(admin)
+            db.commit()
+    finally:
+        db.close()
+
 
 init_db()
+ensure_admin_user()
 
 app = FastAPI(title="LabelCraft API")
 
