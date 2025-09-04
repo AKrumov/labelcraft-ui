@@ -18,7 +18,21 @@ async def test_create_and_list_projects():
         # create project
         resp = await ac.post("/api/v1/projects", json={"name": "proj1"}, headers=headers)
         assert resp.status_code == 200
+        project_id = resp.json()["id"]
 
         # list projects
         resp = await ac.get("/api/v1/projects", headers=headers)
         assert any(p["name"] == "proj1" for p in resp.json())
+
+        # create dataset
+        resp = await ac.post(
+            f"/api/v1/datasets/{project_id}",
+            json={"name": "ds1"},
+            headers=headers,
+        )
+        assert resp.status_code == 200
+
+        # project detail should include dataset
+        resp = await ac.get(f"/api/v1/projects/{project_id}", headers=headers)
+        data = resp.json()
+        assert any(d["name"] == "ds1" for d in data["datasets"])

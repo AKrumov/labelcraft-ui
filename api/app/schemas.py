@@ -46,3 +46,21 @@ class DatasetOut(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class ImageOut(BaseModel):
+    id: int
+    rel_path: str
+    width: int | None = None
+    height: int | None = None
+
+    class Config:
+        orm_mode = True
+
+
+class DatasetDetailOut(DatasetOut):
+    images: list[ImageOut] = []
+
+
+class ProjectDetailOut(ProjectOut):
+    datasets: list[DatasetOut] = []

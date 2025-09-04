@@ -26,6 +26,7 @@ class Project(Base):
     owner_id = Column(Integer, ForeignKey("users.id"))
     created_at = Column(DateTime, default=datetime.utcnow)
     owner = relationship("User")
+    datasets = relationship("Dataset", backref="project", cascade="all,delete")
 
 
 class ProjectMember(Base):
@@ -43,6 +44,7 @@ class Dataset(Base):
     name = Column(String, nullable=False)
     description = Column(Text, default="")
     created_at = Column(DateTime, default=datetime.utcnow)
+    images = relationship("ImageAsset", backref="dataset", cascade="all,delete")
 
 
 class ImageAsset(Base):

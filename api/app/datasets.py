@@ -55,3 +55,18 @@ def upload_image(dataset_id: int, file: UploadFile = File(...), db: Session = De
     db.commit()
     db.refresh(image)
     return {"id": image.id, "rel_path": image.rel_path}
+
+
+@router.get("/{dataset_id}", response_model=schemas.DatasetDetailOut)
+def get_dataset(dataset_id: int, db: Session = Depends(get_db), user: models.User = Depends(get_current_user)):
+    dataset = db.query(models.Dataset).get(dataset_id)
+    if not dataset:
+        raise HTTPException(status_code=404, detail="Dataset not found")
+    membership = (
+        db.query(models.ProjectMember)
+        .filter_by(project_id=dataset.project_id, user_id=user.id)
+        .first()
+    )
+    if not membership:
+        raise HTTPException(status_code=403, detail="Not a project member")
+    return dataset

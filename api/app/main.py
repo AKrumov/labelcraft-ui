@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from .database import init_db, SessionLocal
 from .security import get_password_hash
@@ -41,3 +42,5 @@ app.include_router(annotations.router)
 @app.get("/api/v1/health")
 async def health():
     return {"status": "ok"}
+
+app.mount("/files", StaticFiles(directory="data"), name="files")

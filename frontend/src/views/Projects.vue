@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
+import { RouterLink } from 'vue-router'
 import api from '../api'
 
 interface Project {
@@ -35,9 +36,13 @@ onMounted(async () => {
       />
       <button class="btn btn-primary" type="submit">Add</button>
     </form>
-    <ul class="space-y-2">
-      <li v-for="p in projects" :key="p.id" class="p-2 bg-base-200 rounded">
-        {{ p.name }}
+<ul class="space-y-2">
+      <li
+        v-for="p in projects"
+        :key="p.id"
+        class="p-2 bg-base-200 rounded hover:bg-base-300"
+      >
+        <RouterLink :to="`/projects/${p.id}`">{{ p.name }}</RouterLink>
       </li>
     </ul>
   </div>
